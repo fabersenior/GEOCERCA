@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reto</title>   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height : 90%;		  
+		  width: 98%;
+		  margin-bottom: 10px;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;		 
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+   
+
+    <div id="map">  </div><br>
+   <div style="margin-left: 500px" id="visual">
+  		
+   		<button id="ingreso" type="button" >Ingresar ubicacion</button>
+   		x:(Longitud)
+   		<input id="lat" type="text"  >
+   		y:(Latitud)
+   		<input id="long" type="text"  >
+     </div>
+    <script>
+		var x;
+		var y;
+		var map;	
+		var xvalue;
+		var yvalue;
+		var flag=false;
+		var newpos;
+		var evalua;
+		var boton=document.getElementById("ingreso");	
+		x=document.getElementById("lat");
+		y=document.getElementById("long");
+		boton.onclick=click;
+		
+
+
+
+		function click(){
+			"use strict";			
+			xvalue=x.value;
+			yvalue=y.value;	
+			
+			if(xvalue!="" && yvalue!=""){				
+				flag=true;
+				initMap();
+			}else{
+				alert("ingrese coordenadas");
+			}
+		}
+		
+      function initMap() {	
+		  
+		  var ne,sw,e,w;
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 6.300, lng: -75.500},
+          zoom: 10
+		
+        });		
+		  
+//		 var drawingManager = new google.maps.drawing.DrawingManager();
+//		drawingManager.setMap(map);
+		  var latLng= new  google.maps.LatLng(parseFloat(yvalue),parseFloat(xvalue));
+		  var dc=new  google.maps.LatLng(parseFloat(yvalue)+0.035,parseFloat(xvalue));
+		  var marker = new google.maps.Marker({
+			position: latLng,
+			map: map
+		  });
+		  
+		 var bounds = {
+          north: 6.310,
+          south: 6.201,
+          east: -75.558,
+          west: -75.764
+        };
+
+        // Define un rectangulo y lo establece como no editable, carga las coordenadas(bounds)
+        var rectangle = new google.maps.Rectangle({
+          bounds: bounds,
+          editable: false
+        });
+        rectangle.setMap(map);
+		infoWindow = new google.maps.InfoWindow();
+		  
+	//	  google.maps.event.addListener(rectangle, 'bounds_changed', function() {
+	//		  console.log('Bounds changed.');
+	//		});
+		 ne=rectangle.getBounds().getNorthEast();
+		 sw= rectangle.getBounds().getSouthWest();
+		 // e=rectangle.getBounds().f;
+		  //console.log(map.zoom);
+		  //console.log(ne.lng());
+
+        
+		  if(flag){
+			  	
+			  
+			  if(ne.lat()>=marker.position.lat() && ne.lng()>=marker.position.lng() && sw.lat()<=marker.position.lat() && sw.lng()<=marker.position.lng()){ //&& ne.lng()>marker.position.lng()
+				  //alert("entro");
+				  evalua="Si";
+				  
+			  }else{
+				  evalua="No";
+			  }			  
+			 
+			  var contentString = '<b>Marcador</b><br>' +
+             'Longitud(X): ' + xvalue + ', Latitud (Y): ' + yvalue +'<br>'+
+			 '¿Esta dentro? '+ evalua;
+
+        infoWindow.setContent(contentString);		  
+        infoWindow.setPosition(dc);			  
+			  infoWindow.open(map);
+		  }
+      }
+		
+
+		
+</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArw6r1ODobZkw65n63yKmNQn5raWW9T2g&callback=initMap&libraries=drawing"
+    async defer></script>
+  </body>
+</html>
